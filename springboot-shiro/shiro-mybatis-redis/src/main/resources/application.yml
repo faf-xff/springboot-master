@@ -1,0 +1,53 @@
+server:
+  port: 8081
+
+#数据源配置
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+    url: jdbc:mysql://127.0.0.1:3306/shiro
+    username: root
+    password: admin
+    initial-size: 1
+    min-idle: 1
+    max-active: 20
+  thymeleaf:
+    cache: false
+    mode: LEGACYHTML5
+  redis:
+    host: 192.168.0.132
+    port: 6379
+    password: root
+    timeout: 5000
+    commandTimeout: 5000
+
+mybatis:
+  type-aliases-package: com.example.demo.shiro.entity
+  mapper-locations: classpath:mapper/*.xml
+  configLocation: classpath:mybatis.xml
+
+mapper:
+  identity: MYSQL
+  mappers: com.example.demo.shiro.utils.MyMapper
+  not-empty: false
+
+
+#分页配置
+pagehelper:
+  helper-dialect: mysql
+  offset-as-page-num: true
+  reasonable: true
+  row-bounds-with-count: true
+  support-methods-arguments: true
+  params: count=countSql
+logging:
+  level: debug
+
+
+
+
+
+
+
+

@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.example.demo.mapper.CollecBenefitMapper">
+    <!--日均集客力对比 ==》 品类集客力-->
+    <select id="getCollecTrafficRotioPL" parameterType="Map" resultType="Double">
+        SELECT (IFNULL(SUM(CASE WHEN r.innum >0 THEN r.innum ELSE 0 END),0) / IFNULL(SUM(CASE WHEN r.area >0 THEN r.area ELSE 0 END),0)) num
+        FROM
+        <if test="dataType == 1">
+            report_site_day r
+        </if>
+        <if test="dataType == 2">
+            report_site_week r
+        </if>
+        <if test="dataType == 3">
+            report_site_month r
+        </if>
+        <if test="dataType == 4">
+            report_site_year r
+        </if>
+        INNER JOIN  site_mapping_brand smb ON r.relationid  = smb.siteid
+        INNER JOIN brand_info bi ON bi.brand_guid = smb.brandGUID
+        LEFT JOIN format_info fi ON fi.format_id = bi.format_guid
+        INNER JOIN site_relation sr1 ON sr1.childid = smb.siteId
+        RIGHT JOIN (
+            SELECT fi.format_id,sr.parent300 parent300 FROM site_mapping_brand smb
+            LEFT JOIN brand_info bi ON bi.brand_guid = smb.brandGUID
+            LEFT JOIN format_info fi ON fi.format_id = bi.format_guid
+            INNER JOIN site_relation sr ON sr.childId = smb.siteid
+            WHERE smb.siteId = #{siteKey}
+        ) temp ON fi.format_id = temp.format_id
+        WHERE sr1.parent300 = temp.parent300
+        <if test="dataType == 1">
+            AND r.datatime BETWEEN #{startDate} AND #{endDate}
+        </if>
+        <if test="dataType == 2">
+            AND (r.year = #{year} AND r.week BETWEEN #{startDate} AND #{endDate})
+            <if test="year != endYear and endYear != null">
+                OR (r.year = #{endYear} AND r.week BETWEEN #{startDate1} AND #{endDate1})
+            </if>
+        </if>
+        <if test="dataType == 3">
+            AND (r.year = #{year} AND r.month BETWEEN #{startDate} AND #{endDate})
+            <if test="year != endYear and endYear != null">
+                OR (r.year = #{endYear} AND r.month BETWEEN #{startDate1} AND #{endDate1})
+            </if>
+        </if>
+        <if test="dataType == 4">
+            AND r.year BETWEEN #{startDate} AND #{endDate}
+        </if>
+    </select>
+    <!--日均集客力对比 ==》 业态集客力-->
+    <select id="getCollecTrafficRotioYT" parameterType="Map" resultType="Double">
+      SELECT (IFNULL(SUM(CASE WHEN  r.innum >0 THEN  r.innum ELSE 0 END),0) / IFNULL(SUM(CASE WHEN  r.area >0 THEN  r.area ELSE 0 END),0)) num
+        FROM
+        <if test="dataType == 1">
+            report_site_day r
+        </if>
+        <if test="dataType == 2">
+            report_site_week r
+        </if>
+        <if test="dataType == 3">
+            report_site_month r
+        </if>
+        <if test="dataType == 4">
+            report_site_year r
+        </if>
+        INNER JOIN site_mapping_brand smb
+        ON r.relationid  = smb.siteid
+        INNER JOIN  brand_info bi ON bi.brand_guid = smb.brandGUID
+        INNER JOIN format_info fia ON fia.format_id = bi.format_guid
+        INNER JOIN format_info fib ON fia.parentid = fib.format_id
+        INNER JOIN format_info fic  ON fib.parentid = fic.format_id
+        INNER JOIN site_relation sr1 ON sr1.childid =  smb.siteId
+        RIGHT JOIN (
+            SELECT fic.format_id,sr.parent300 parent300 FROM site_mapping_brand smb
+            LEFT JOIN brand_info bi ON bi.brand_guid = smb.brandGUID
+            INNER JOIN format_info fia ON fia.format_id = bi.format_guid
+            INNER JOIN format_info fib ON fia.parentid = fib.format_id
+            INNER JOIN format_info fic  ON fib.parentid = fic.format_id
+            INNER JOIN site_relation sr ON sr.childId = smb.siteid
+            WHERE smb.siteId = #{siteKey}
+        ) temp ON fic.format_id = temp.format_id
+        where sr1.parent300 = temp.parent300
+        <if test="dataType == 1">
+            AND r.datatime BETWEEN #{startDate} AND #{endDate}
+        </if>
+        <if test="dataType == 2">
+            AND (r.year = #{year} AND r.week BETWEEN #{startDate} AND #{endDate})
+            <if test="year != endYear and endYear != null">
+                OR (r.year = #{endYear} AND r.week BETWEEN #{startDate1} AND #{endDate1})
+            </if>
+        </if>
+        <if test="dataType == 3">
+            AND (r.year = #{year} AND r.month BETWEEN #{startDate} AND #{endDate})
+            <if test="year != endYear and endYear != null">
+                OR (r.year = #{endYear} AND r.month BETWEEN #{startDate1} AND #{endDate1})
+            </if>
+        </if>
+        <if test="dataType == 4">
+            AND r.year BETWEEN #{startDate} AND #{endDate}
+        </if>
+    </select>
+    <!--日均集客力对比 ==》 本店集客力-->
+    <select id="getCollecTrafficRotioBD" parameterType="Map" resultType="Double">
+        SELECT (IFNULL(SUM(CASE WHEN r.innum >0 THEN r.innum ELSE 0 END),0) / IFNULL(SUM(CASE WHEN  r.area >0 THEN  r.area ELSE 0 END),0)) num
+        FROM
+        <if test="dataType == 1">
+            report_site_day r
+        </if>
+        <if test="dataType == 2">
+            report_site_week r
+        </if>
+        <if test="dataType == 3">
+            report_site_month r
+        </if>
+        <if test="dataType == 4">
+            report_site_year r
+        </if>
+        WHERE r.relationid = #{siteKey}
+        <if test="dataType == 1">
+            AND r.datatime BETWEEN #{startDate} AND #{endDate}
+        </if>
+        <if test="dataType == 2">
+            AND (r.year = #{year} AND r.week BETWEEN #{startDate} AND #{endDate})
+            <if test="year != endYear and endYear != null">
+                OR (r.year = #{endYear} AND r.week BETWEEN #{startDate1} AND #{endDate1})
+            </if>
+        </if>
+        <if test="dataType == 3">
+            AND (r.year = #{year} AND r.month BETWEEN #{startDate} AND #{endDate})
+            <if test="year != endYear and endYear != null">
+                OR (r.year = #{endYear} AND r.month BETWEEN #{startDate1} AND #{endDate1})
+            </if>
+        </if>
+        <if test="dataType == 4">
+            AND r.year BETWEEN #{startDate} AND #{endDate}
+        </if>
+    </select>
+    <!--日均集客力对比 ==》 本广场集客力-->
+    <select id="getCollecTrafficRotioBGC" parameterType="Map" resultType="Double">
+        SELECT (IFNULL(sum(CASE when  r.innum >0 then  r.innum else 0 END),0) / IFNULL(sum(CASE when  r.area >0 then  r.area else 0 END),0)) num
+        FROM
+        <if test="dataType == 1">
+            report_site_day r
+        </if>
+        <if test="dataType == 2">
+            report_site_week r
+        </if>
+        <if test="dataType == 3">
+            report_site_month r
+        </if>
+        <if test="dataType == 4">
+            report_site_year r
+        </if>
+        INNER JOIN  site_relation sr
+        ON r.relationid  = sr.id
+        LEFT JOIN site_all_info sai ON sr.id = sai.siteid
+        WHERE sr.Parent300 = (
+            SELECT Parent300 FROM site_relation WHERE id = #{siteKey}
+        )
+        AND sai.type = '600'
+        <if test="dataType == 1">
+            AND r.datatime BETWEEN #{startDate} AND #{endDate}
+        </if>
+        <if test="dataType == 2">
+            AND (r.year = #{year} AND r.week BETWEEN #{startDate} AND #{endDate})
+            <if test="year != endYear and endYear != null">
+                OR (r.year = #{endYear} AND r.week BETWEEN #{startDate1} AND #{endDate1})
+            </if>
+        </if>
+        <if test="dataType == 3">
+            AND (r.year = #{year} AND r.month BETWEEN #{startDate} AND #{endDate})
+            <if test="year != endYear and endYear != null">
+                OR (r.year = #{endYear} AND r.month BETWEEN #{startDate1} AND #{endDate1})
+            </if>
+        </if>
+        <if test="dataType == 4">
+            AND r.year BETWEEN #{startDate} AND #{endDate}
+        </if>
+    </select>
+
+
+    <!--集客力对比趋势 ==》 业态集客力-->
+    <select id="getCollecCompareTrendYT" parameterType="Map" resultType="Map">
+        select ROUND((IFNULL(SUM(r.innum),0) / IFNULL(SUM(r.area),0)),2) num,
+        <if test="dataType == 1">
+            r.datatime datas FROM report_site_day r
+        </if>
+        <if test="dataType == 2">
+            r.week datas FROM report_site_week r
+        </if>
+        <if test="dataType == 3">
+            CONCAT(r.year,'-',r.month) datas FROM report_site_month r
+        </if>
+        <if test="dataType == 4">
+            r.year datas FROM report_site_year r
+        </if>
+        INNER JOIN site_mapping_brand smb
+        ON r.relationid  = smb.siteid
+        INNER JOIN  brand_info bi ON bi.brand_guid = smb.brandGUID
+        LEFT JOIN format_info fi ON fi.format_id = bi.format_guid
+        INNER JOIN site_relation sr1 ON sr1.childid =  smb.siteId
+        RIGHT JOIN (
+            SELECT fi.format_id,sr.parent300 parent300 FROM site_mapping_brand smb
+            LEFT JOIN brand_info bi ON bi.brand_guid = smb.brandGUID
+            LEFT JOIN format_info fi  ON fi.format_id = bi.format_guid
+            INNER JOIN site_relation sr ON sr.childId = smb.siteid
+            WHERE smb.siteId = #{siteKey}
+        ) temp ON fi.format_id = temp.format_id
+        WHERE sr1.parent300 = temp.parent300
+        <if test="dataType == 1">
+            AND r.datatime BETWEEN #{startDate} AND #{endDate}
+            GROUP BY r.datatime
+        </if>
+        <if test="dataType == 2">
+            AND (r.year = #{year} AND r.week BETWEEN #{startDate} AND #{endDate})
+            <if test="year != endYear and endYear != null">
+                OR (r.year = #{endYear} AND r.week BETWEEN #{startDate1} AND #{endDate1})
+            </if>
+            GROUP BY r.week
+        </if>
+        <if test="dataType == 3">
+            AND (r.year = #{year} AND r.month BETWEEN #{startDate} AND #{endDate})
+            <if test="year != endYear and endYear != null">
+                OR (r.year = #{endYear} AND r.month BETWEEN #{startDate1} AND #{endDate1})
+            </if>
+            GROUP BY r.month
+        </if>
+        <if test="dataType == 4">
+            AND r.year BETWEEN #{startDate} AND #{endDate}
+            GROUP BY r.year
+        </if>
+    </select>
+    <!--集客力对比趋势 ==》 品类集客力-->
+    <select id="getCollecCompareTrendPL" parameterType="Map" resultType="Map">
+        select ROUND((IFNULL(SUM(r.innum),0) / IFNULL(SUM(r.area),0)),2) num,
+        <if test="dataType == 1">
+            r.datatime datas FROM report_site_day r
+        </if>
+        <if test="dataType == 2">
+            r.week datas FROM report_site_week r
+        </if>
+        <if test="dataType == 3">
+            CONCAT(r.year,'-',r.month) datas FROM report_site_month r
+        </if>
+        <if test="dataType == 4">
+            r.year datas FROM report_site_year r
+        </if>
+        INNER JOIN  site_mapping_brand smb
+        ON r.relationid  = smb.siteid
+        INNER JOIN  brand_info bi ON bi.brand_guid = smb.brandGUID
+        INNER JOIN format_info fia ON fia.format_id = bi.format_guid
+        INNER JOIN format_info fib ON fia.parentid = fib.format_id
+        INNER JOIN format_info fic  ON fib.parentid = fic.format_id
+        INNER JOIN site_relation sr1 ON sr1.childid =  smb.siteId
+        RIGHT JOIN (
+            SELECT fic.format_id,sr.parent300 parent300 FROM site_mapping_brand smb
+            LEFT JOIN brand_info bi ON bi.brand_guid = smb.brandGUID
+            INNER JOIN format_info fia ON fia.format_id = bi.format_guid
+            INNER JOIN format_info fib ON fia.parentid = fib.format_id
+            INNER JOIN format_info fic  ON fib.parentid = fic.format_id
+            INNER JOIN site_relation sr ON sr.childId = smb.siteid
+            WHERE smb.siteId = #{siteKey}
+        ) temp ON fic.format_id = temp.format_id
+        where sr1.parent300 = temp.parent300
+        <if test="dataType == 1">
+            AND r.datatime BETWEEN #{startDate} AND #{endDate}
+            GROUP BY r.datatime
+        </if>
+        <if test="dataType == 2">
+            AND (r.year = #{year} AND r.week BETWEEN #{startDate} AND #{endDate})
+            <if test="year != endYear and endYear != null">
+                OR (r.year = #{endYear} AND r.week BETWEEN #{startDate1} AND #{endDate1})
+            </if>
+            GROUP BY r.week
+        </if>
+        <if test="dataType == 3">
+            AND (r.year = #{year} AND r.month BETWEEN #{startDate} AND #{endDate})
+            <if test="year != endYear and endYear != null">
+                OR (r.year = #{endYear} AND r.month BETWEEN #{startDate1} AND #{endDate1})
+            </if>
+            GROUP BY r.month
+        </if>
+        <if test="dataType == 4">
+            AND r.year BETWEEN #{startDate} AND #{endDate}
+            GROUP BY r.year
+        </if>
+    </select>
+    <!--集客力对比趋势 ==》 本店集客力-->
+    <select id="getCollecCompareTrendBD" parameterType="Map" resultType="Map">
+        select ROUND((IFNULL(SUM(r.innum),0) / IFNULL(SUM(r.area),0)),2) num,
+        <if test="dataType == 1">
+            r.datatime datas FROM report_site_day r
+        </if>
+        <if test="dataType == 2">
+            r.week datas FROM report_site_week r
+        </if>
+        <if test="dataType == 3">
+            CONCAT(r.year,'-',r.month) datas FROM report_site_month r
+        </if>
+        <if test="dataType == 4">
+            r.year datas FROM report_site_year r
+        </if>
+        where r.relationid = #{siteKey}
+        <if test="dataType == 1">
+            AND r.datatime BETWEEN #{startDate} AND #{endDate}
+            GROUP BY r.datatime
+        </if>
+        <if test="dataType == 2">
+            AND (r.year = #{year} AND r.week BETWEEN #{startDate} AND #{endDate})
+            <if test="year != endYear and endYear != null">
+                OR (r.year = #{endYear} AND r.week BETWEEN #{startDate1} AND #{endDate1})
+            </if>
+            GROUP BY r.week
+        </if>
+        <if test="dataType == 3">
+            AND (r.year = #{year} AND r.month BETWEEN #{startDate} AND #{endDate})
+            <if test="year != endYear and endYear != null">
+                OR (r.year = #{endYear} AND r.month BETWEEN #{startDate1} AND #{endDate1})
+            </if>
+            GROUP BY r.month
+        </if>
+        <if test="dataType == 4">
+            AND r.year BETWEEN #{startDate} AND #{endDate}
+            GROUP BY r.year
+        </if>
+    </select>
+    <!--集客力对比趋势 ==》 本广场集客力-->
+    <select id="getCollecCompareTrendBGC" parameterType="Map" resultType="Map">
+        SELECT ROUND((IFNULL(SUM(r.innum),0) / IFNULL(SUM(r.area),0)),2) num,
+        <if test="dataType == 1">
+            r.datatime datas FROM report_site_day r
+        </if>
+        <if test="dataType == 2">
+            r.week datas FROM report_site_week r
+        </if>
+        <if test="dataType == 3">
+            CONCAT(r.year,'-',r.month) datas from report_site_month r
+        </if>
+        <if test="dataType == 4">
+            r.year datas FROM report_site_year r
+        </if>
+        WHERE r.relationid = (
+            SELECT Parent300 FROM site_relation  WHERE id = #{siteKey}
+        )
+        <if test="dataType == 1">
+            AND r.datatime BETWEEN #{startDate} AND #{endDate}
+            GROUP BY r.datatime
+        </if>
+        <if test="dataType == 2">
+            AND (r.year = #{year} AND r.week BETWEEN #{startDate} AND #{endDate})
+            <if test="year != endYear and endYear != null">
+                OR (r.year = #{endYear} AND r.week BETWEEN #{startDate1} AND #{endDate1})
+            </if>
+            GROUP BY r.week
+        </if>
+        <if test="dataType == 3">
+            AND (r.year = #{year} AND r.month BETWEEN #{startDate} AND #{endDate})
+            <if test="year != endYear and endYear != null">
+                OR (r.year = #{endYear} AND r.month BETWEEN #{startDate1} AND #{endDate1})
+            </if>
+            GROUP BY r.month
+        </if>
+        <if test="dataType == 4">
+            AND r.year BETWEEN #{startDate} AND #{endDate}
+            GROUP BY r.year
+        </if>
+    </select>
+
+</mapper>
+ 

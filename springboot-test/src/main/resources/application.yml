@@ -1,0 +1,24 @@
+server:
+  port: 8081
+
+# Mybatis
+mybatis:
+    mapperLocations: classpath:mapper/**/*.xml
+    configuration:
+      map-underscore-to-camel-case: true #表名驼峰映射
+
+# mysql
+spring:
+    profiles:
+        active: dev
+    datasource:
+        type: com.alibaba.druid.pool.DruidDataSource
+        driverClassName: com.mysql.jdbc.Driver
+    jackson:
+        time-zone: GMT+8
+        date-format: yyyy-MM-dd HH:mm:ss
+
+#打印sql
+logging:
+  level:
+    com.example.demo.mapper : debug

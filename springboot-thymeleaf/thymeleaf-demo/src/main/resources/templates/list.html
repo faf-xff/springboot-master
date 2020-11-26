@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>用户页</title>
+</head>
+<body>
+    <div style="display: block;margin: 0 auto;">
+        <table border="1">
+            <caption>用户列表</caption>
+            <tr align="center" bgcolor="#faebd7">
+                <th>用户ID</th>
+                <th>用户名称</th>
+                <th>用户密码</th>
+                <th>用户性别</th>
+                <th>联系电话</th>
+                <th>电子邮箱</th>
+                <th>操作</th>
+            </tr>
+            <tr th:each="user:${userList}" align="center">
+                <td th:text="${user.id}"></td>
+                <td th:text="${user.name}"></td>
+                <td th:text="${user.password}"></td>
+                <td th:text="${user.sex}"></td>
+                <td th:text="${user.tel}"></td>
+                <td th:text="${user.email}"></td>
+                <td><a href="#">详情</a> | <a href="#">编辑</a> | <a href="#">删除</a></td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

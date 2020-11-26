@@ -1,0 +1,30 @@
+server:
+  port: 8081
+
+# mysql
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+    url: jdbc:mysql://127.0.0.1:3306/shiro
+    username: root
+    password: admin
+    initial-size: 1
+    min-idle: 1
+    max-active: 20
+
+# Mybatis����
+mybatis:
+    mapperLocations: classpath:mapper/**/*.xml
+    configuration:
+      map-underscore-to-camel-case: true
+
+
+#��ҳ����
+pagehelper:
+  helper-dialect: mysql
+  offset-as-page-num: true
+  params: count=countSql
+  reasonable: true
+  row-bounds-with-count: true
+  support-methods-arguments: true

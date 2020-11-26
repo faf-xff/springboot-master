@@ -1,0 +1,32 @@
+#mysql
+spring:
+    profiles:
+        active: dev
+    datasource:
+        type: com.alibaba.druid.pool.DruidDataSource
+        driverClassName: com.mysql.jdbc.Driver
+    jackson:
+        time-zone: GMT+8
+        date-format: yyyy-MM-dd HH:mm:ss
+
+    activemq:
+      broker-url: tcp://localhost:61616
+      in-memory: false
+      pool:
+        #true表示使用连接池
+        enabled: true
+        #空闲的连接过期时间，默认为30秒
+        max-connections: 5
+        #空闲的连接过期时间，默认为30秒
+        idle-timeout: 30000
+        #强制的连接过期时间，与idleTimeout的区别在于：idleTimeout是在连接空闲一段时间失效，而expiryTimeout不管当前连接的情况，只要达到指定时间就失效。默认为0，never
+        expiry-timeout: 0
+
+# Mybatis
+#mybatis:
+#    mapperLocations: classpath:mapper/**/*.xml
+#    configLocation: classpath:mybatis.xml
+
+
+
+

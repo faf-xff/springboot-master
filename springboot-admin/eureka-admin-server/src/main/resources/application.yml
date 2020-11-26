@@ -1,0 +1,41 @@
+server:
+  port: 8002
+
+spring:
+  application:
+    name: eureka-admin-server
+  security:
+    user:
+      name: "admin"
+      password: "admin"
+  mail:
+    host: smtp.163.com
+    username: typ1805@163.com
+    password: typ1805
+    default-encoding: UTF-8
+  boot:
+    admin:
+      notify:
+        mail:
+          to: 742354529@qq.com
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_SERVICE_URL:http://localhost:8001}/eureka/
+    registry-fetch-interval-seconds: 5
+  instance:
+    health-check-url-path: /actuator/health
+    lease-renewal-interval-in-seconds: 10
+    metadata-map:
+      user.name: ${spring.security.user.name}
+      user.password: ${spring.security.user.password}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always

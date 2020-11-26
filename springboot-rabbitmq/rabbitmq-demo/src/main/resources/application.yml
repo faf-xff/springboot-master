@@ -1,0 +1,11 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: rabbitmq-demo
+  rabbitmq:
+    host: 192.168.0.132
+    port: 5672
+    username: admin
+    password: admin

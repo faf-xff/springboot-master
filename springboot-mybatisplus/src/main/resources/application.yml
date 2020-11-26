@@ -1,0 +1,19 @@
+server:
+  port: 8081
+
+# mysql
+spring:
+    profiles:
+        active: dev
+    datasource:
+        type: com.alibaba.druid.pool.DruidDataSource
+        driverClassName: com.mysql.jdbc.Driver
+    jackson:
+        time-zone: GMT+8
+        date-format: yyyy-MM-dd HH:mm:ss
+
+# 主键策略配置
+mybatis-plus:
+  global-config:
+    db-config:
+      id-type: auto
